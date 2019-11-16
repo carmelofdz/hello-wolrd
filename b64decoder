@@ -1,0 +1,18 @@
+'''Base64 Decoder
+Lee cada linea de un fichero, start y final marcan el principio y final del archivo en b64
+'''
+import base64
+
+with open('decodedpro.txt') as f:
+    for line in f:
+        x = line.split("<>")
+        if x[0]=="START":
+            file = ''
+        elif x[0]!="FINAL":
+            file += base64.b64decode(x[1])
+        else:
+            print "nuevo archivo:"+x[1]
+            f = open(x[1].split('\\')[-1], 'w+b')
+            binary_format = bytearray(file)
+            f.write(file)
+            f.close()
