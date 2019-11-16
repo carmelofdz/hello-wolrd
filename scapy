@@ -1,0 +1,25 @@
+'''
+Leemos un pcap con scapy, extraemos la parte del paquete que nos interesa y enviamos el output a un fichero
+para tratar los datos
+'''
+
+import base64
+from scapy.all import *
+from scapy.layers.dns import DNS, DNSQR
+
+types = {0: 'ANY', 255: 'ALL',1: 'A', 2: 'NS', 3: 'MD', 4: 'MD', 5: 'CNAME',
+         6: 'SOA', 7:  'MB',8: 'MG',9: 'MR',10: 'NULL',11: 'WKS',12: 'PTR',
+         13: 'HINFO',14: 'MINFO',15: 'MX',16: 'TXT',17: 'RP',18: 'AFSDB',
+         28: 'AAAA', 33: 'SRV',38: 'A6',39: 'DNAME'}
+
+dns_packets = rdpcap('test2.pcapng')
+f = open('decodedpro.txt', 'w+b')
+for packet in dns_packets:
+    if packet.haslayer(DNS):
+        print(packet.show())
+        if packet[IP].src=='192.168.226.141':
+            rec_type = packet[DNSQR].qtype
+            #print (dst, types[rec_type])
+            #print base64.b64decode(packet[DNSQR].qname)
+            f.write(base64.b64decode(packet[DNSQR].qname)+'\n')
+f.close()
